@@ -1,0 +1,10 @@
+{
+    "name": "rust-remote-container",
+    "dockerComposeFile": ["../docker-compose.yml", "docker-compose.extend.yml"],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "remoteUser": "vscode",
+    "service": "rust",
+    "workspaceFolder": "/usr/src/app"
+}

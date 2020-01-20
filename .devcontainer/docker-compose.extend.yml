@@ -1,0 +1,11 @@
+version: '3'
+services:
+    rust:
+        build:
+          context: .devcontainer
+          dockerfile: Dockerfile
+        volumes:
+          - .:/usr/src/app
+        environment:
+          - USER=`${USER}`
+        stdin_open: true
