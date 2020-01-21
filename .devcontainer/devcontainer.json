@@ -6,5 +6,9 @@
     },
     "remoteUser": "vscode",
     "service": "rust",
-    "workspaceFolder": "/usr/src/app"
+    "workspaceFolder": "/usr/src/app",
+    "extensions": [
+		"rust-lang.rust",
+		"bungcip.better-toml"
+	]
 }
