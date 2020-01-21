@@ -1,37 +1,70 @@
-extern crate rand;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
-use rand::Rng;
-use std::cmp::Ordering;
-use std::io;
+struct Philosopher {
+    name: String,
+    left: usize,
+    right: usize,
+}
+
+impl Philosopher {
+    fn new(name: &str, left: usize, right: usize) -> Philosopher {
+        Philosopher {
+            name: name.to_string(),
+            left: left,
+            right: right,
+        }
+    }
+
+    fn eat(&self, table: &Table) {
+        let _left = table.forks[self.left].lock().unwrap();
+        thread::sleep(Duration::from_millis(150));
+        let _right = table.forks[self.right].lock().unwrap();
+
+        println!("{} is eating.", self.name);
+
+        thread::sleep(Duration::from_millis(1000));
+
+        println!("{} is done eating.", self.name);
+    }
+}
+
+struct Table {
+    forks: Vec<Mutex<()>>,
+}
 
 fn main() {
-    println!("guess the number!");
+    let table = Arc::new(Table {
+        forks: vec![
+            Mutex::new(()),
+            Mutex::new(()),
+            Mutex::new(()),
+            Mutex::new(()),
+            Mutex::new(()),
+        ],
+    });
 
-    let secret_number = rand::thread_rng().gen_range(1, 101);
+    let philosophers = vec![
+        Philosopher::new("Judith Butler", 0, 1),
+        Philosopher::new("Gilles Deleuze", 1, 2),
+        Philosopher::new("Karl Marx", 2, 3),
+        Philosopher::new("Emma Goldman", 3, 4),
+        Philosopher::new("Michel Foucault", 0, 4),
+    ];
 
-    loop {
-        println!("please input yur guess.");
+    let handlers: Vec<_> = philosophers
+        .into_iter()
+        .map(|p| {
+            let table = table.clone();
 
-        let mut guess = String::new();
+            thread::spawn(move || {
+                p.eat(&table);
+            })
+        })
+        .collect();
 
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("you guessed: {}", guess);
-
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("too small!"),
-            Ordering::Greater => println!("too big!"),
-            Ordering::Equal => {
-                println!("you win");
-                break;
-            },
-        }
+    for h in handlers {
+        h.join().unwrap();
     }
 }
