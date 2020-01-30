@@ -27,3 +27,13 @@ Cargo.lock
 
 # mysql data
 /mysql/db/data
+
+#Added by cargo
+#
+#already existing elements are commented out
+
+#/target
+#**/*.rs.bk
+
+# mysql data
+/mysql/db/data

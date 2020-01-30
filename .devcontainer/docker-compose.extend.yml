@@ -9,3 +9,7 @@ services:
         environment:
           - USER=`${USER}`
         stdin_open: true
+        ports:
+          - 8003:8000
+        networks: 
+          - rust-net

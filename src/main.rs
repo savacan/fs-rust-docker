@@ -1,37 +1,12 @@
-extern crate rand;
+#![feature(proc_macro_hygiene, decl_macro)]
 
-use rand::Rng;
-use std::cmp::Ordering;
-use std::io;
+#[macro_use] extern crate rocket;
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
 
 fn main() {
-    println!("guess the number!");
-
-    let secret_number = rand::thread_rng().gen_range(1, 101);
-
-    loop {
-        println!("please input yur guess.");
-
-        let mut guess = String::new();
-
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
-
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("you guessed: {}", guess);
-
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("too small!"),
-            Ordering::Greater => println!("too big!"),
-            Ordering::Equal => {
-                println!("you win");
-                break;
-            },
-        }
-    }
+    rocket::ignite().mount("/", routes![index]).launch();
 }
